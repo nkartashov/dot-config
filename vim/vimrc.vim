@@ -58,14 +58,14 @@ Plugin 'andviro/flake8-vim'
 " Tmux syntax support
 Plugin 'whatyouhide/vim-tmux-syntax'
 
-" Rust
-Plugin 'rust-lang/rust.vim'
-
 " TOML
 Plugin 'cespare/vim-toml'
 
 " FTL (FreeMarker Template Language)
 Plugin 'chaquotay/ftl-vim-syntax'
+
+" Display marks
+Plugin 'kshenoy/vim-signature'
 
 call vundle#end()
 
@@ -93,6 +93,7 @@ filetype plugin indent on
 
 " DISPLAY SETTINGS
 colorscheme solarized   " sets the colorscheme
+let g:solarized_termcolors=256
 set background=dark     " enable for dark terminals
 set scrolloff=5         " 2 lines above/below cursor when scrolling
 set showmatch           " show matching bracket (briefly jump)
@@ -103,14 +104,14 @@ set ruler               " show cursor position in status bar
 set title               " show file in titlebar
 set cursorline          " highlights the current line
 set winaltkeys=no       " turns of the Alt key bindings to the gui menu
+set autochdir           " always changed the current dir to the file open
 
 " When you type the first tab, it will complete as much as possible, the second
 " tab hit will provide a list, the third and subsequent tabs will cycle through
 " completion options so you can complete the file without further keys
 set wildmode=longest,list,full
 set wildmenu            " completion with menu
-" This changes the default display of tab and CR chars in list mode
-set listchars=tab:▸\ ,eol:¬
+set pumheight=20        " limit popup menu height
 
 " The "longest" option makes completion insert the longest prefix of all
 " the possible matches; see :h completeopt
@@ -181,7 +182,7 @@ set incsearch           " highlight-as-I-type the search string
 set textwidth=100
 
 " this makes the color after the textwidth column highlighted
-set colorcolumn=+1
+set colorcolumn=80
 
 " options for formatting text; see :h formatoptions
 set formatoptions=tcroqnj
@@ -229,22 +230,13 @@ autocmd FileType json setlocal ts=2 sts=2 sw=2
 
 autocmd vimrc FileType snippets set noexpandtab
 
-" Open splits to the right
-set splitright
-
 " Lines enumeration
 set number
-
-" Highlight uwanted spaces, nice for tsv files viewing
-set list
-set listchars=trail:·
-set listchars=tab:→→
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                           Explore mode settings                         "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-map <F4> :Vexplore<CR>
+map <F1> :Vexplore<CR>
 let g:netrw_liststyle=3
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -291,10 +283,10 @@ autocmd vimrc FileType markdown setlocal spell! spelllang=en_us
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Switch between tabs on F7 and F8
-map <F8> :tabnext<CR>
-map! <F8> <ESC>:tabnext<CR>i
-map <F7> :tabprevious<CR>
-map! <F7> <ESC>:tabprevious<CR>
+map <F4> :tabnext<CR>
+map! <F4> <ESC>:tabnext<CR>i
+map <F3> :tabprevious<CR>
+map! <F3> <ESC>:tabprevious<CR>
 
 " this makes vim's regex engine "not stupid"
 " see :h magic
@@ -321,9 +313,9 @@ let g:airline_theme='solarized'
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '◀'
-let g:airline_symbols.branch = '⎇'
+let g:airline_left_sep = '>'
+let g:airline_right_sep = '<'
+let g:airline_symbols.branch = '|-'
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
@@ -338,8 +330,8 @@ let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_goto_buffer_command = 'new-tab'
-let g:ycm_error_symbol = '☓'
-let g:ycm_warning_symbol = '☝'
+let g:ycm_error_symbol = 'X'
+let g:ycm_warning_symbol = '!'
 let g:ycm_filetype_specific_completion_to_disable = {
     \ 'csv' : 1,
     \ 'diff' : 1,
@@ -357,7 +349,8 @@ let g:ycm_filetype_specific_completion_to_disable = {
     \ 'unite' : 1,
     \ 'vimwiki' : 1
     \}
-autocmd FileType c,cpp,python nnoremap <buffer> <C-]> :YcmCompleter GoTo<CR>
+autocmd FileType c,cpp,python nnoremap <buffer> <F5> :YcmCompleter GoToDeclaration<CR>
+autocmd FileType c,cpp,python nnoremap <buffer> <F6> :YcmCompleter GoToDefinition<CR>
 autocmd FileType c,cpp,python nnoremap <buffer> <F10> :YcmDiags<CR>
 autocmd FileType c,ccp,python nnoremap <buffer> <C-h> :YcmCompleter GetDoc<CR>
 
@@ -377,7 +370,7 @@ let g:UltiSnipsEditSplit = 'horizontal'
 
 let g:tagbar_autofocus = 1
 let g:tagbar_width = 50
-nmap <F9> :TagbarToggle<CR>
+nmap <F2> :TagbarToggle<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                             chrisbra/csv.vim                            "
